@@ -11,8 +11,8 @@ export type blogPostMetaType =
   | "_yoast_fb_image"
   | "_yoast_fb_image_id";
 
-export enum blogPostSyndicationStatus{
-"Pending"=1,
-"Pending Approval",
-"Approved"
+export enum blogPostSyndicationStatus {
+  "Pending" = 1,
+  "Pending Approval",
+  "Approved",
 }

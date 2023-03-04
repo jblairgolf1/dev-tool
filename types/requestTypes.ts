@@ -37,10 +37,10 @@ export interface InterfaceRequestBlog {
   website_url?: string;
   post_meta?: InterFaceRequestBlogPostMeta;
   author_mail: string;
-  author_name?:string
+  author_name?: string;
   post_status_syndication: BlogPostStatus;
   schedule_post_date: Date;
-  author_email?:string|undefined
+  author_email?: string | undefined;
 }
 
 interface InterFaceRequestBlogPostMeta extends Object {
