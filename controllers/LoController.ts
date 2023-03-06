@@ -18,14 +18,11 @@ const addNewLo = async (req: Request, res: Response) => {
           [branch_id, `https://${website_url}`, lo_email, lo_name]
         );
         await axios
-          .post(
-            `https://${branch_url}/?rest_route=/connectexpress/v1/createnewlosite`,
-            {
-              site_url: "/",
-              site_title: lo_name,
-              domain: website_url,
-            }
-          )
+          .post(`https://${branch_url}/?rest_route=/connectexpress/v1/createnewlosite`, {
+            site_url: "/",
+            site_title: lo_name,
+            domain: website_url,
+          })
           .then((response) => {
             return res.json({
               success: true,

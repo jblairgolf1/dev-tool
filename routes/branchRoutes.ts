@@ -13,13 +13,7 @@ router.post("/getsitedetails", branchController.getSiteDetails);
 router.post("/postblogtodb", branchController.postBlogToDb);
 router.post("/getpostbytid", branchController.getPostByID);
 router.post("/addbranchurl", branchController.addBranchUrl);
-router.get(
-  "/withoutemailbranches",
-  branchController.getBranchesWithoutAssociatedEmail
-);
-router.post(
-  "/approveandscheduleblogpost",
-  branchController.approveAndScheduleBlogPost
-);
+router.get("/withoutemailbranches", branchController.getBranchesWithoutAssociatedEmail);
+router.post("/approveandscheduleblogpost", branchController.approveAndScheduleBlogPost);
 
 module.exports = router;

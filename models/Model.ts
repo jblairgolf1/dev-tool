@@ -34,21 +34,18 @@ export class Model {
    */
   all<P = any>(): Promise<P[]> {
     return new Promise<P[]>((resolve, reject) => {
-      pool.query(
-        format("SELECT * FROM %I", this.table),
-        (err: Error, res: QueryResult<P>) => {
-          if (err) {
-            reject(new Error(err.message));
-            return;
-          }
-          if (res.rows.length === 0) {
-            resolve([]);
-            return;
-          }
-          resolve(res.rows);
+      pool.query(format("SELECT * FROM %I", this.table), (err: Error, res: QueryResult<P>) => {
+        if (err) {
+          reject(new Error(err.message));
           return;
         }
-      );
+        if (res.rows.length === 0) {
+          resolve([]);
+          return;
+        }
+        resolve(res.rows);
+        return;
+      });
     });
   }
 
@@ -58,16 +55,8 @@ export class Model {
    * @param values Array{T} Array of corresponding values for cols,both array must match in length
    * @returns The newly inserted row of the current model instance
    */
-  insert<V = string[], T = string | number[], P = any>(
-    cols: V[],
-    values: T[]
-  ): Promise<P> {
-    const query = format(
-      "INSERT INTO %I (%s) VALUES (%L) RETURNING *",
-      this.table,
-      cols,
-      values
-    );
+  insert<V = string[], T = string | number[], P = any>(cols: V[], values: T[]): Promise<P> {
+    const query = format("INSERT INTO %I (%s) VALUES (%L) RETURNING *", this.table, cols, values);
     return new Promise<P>((resolve, reject) => {
       pool.query(query, (err: Error, res: QueryResult<P>) => {
         if (err) {
@@ -120,12 +109,7 @@ export class Model {
           return;
         }
         // otherwise run prepare the query
-        const query = format(
-          "UPDATE %I SET %s RETURNING %s",
-          this.table,
-          setStrings,
-          returning
-        );
+        const query = format("UPDATE %I SET %s RETURNING %s", this.table, setStrings, returning);
         pool.query(query, (err: Error, res: QueryResult<P>) => {
           if (err) {
             reject(new Error(err.message));
@@ -174,30 +158,18 @@ export class Model {
     }
 
     return new Promise<P>((resolve, reject) => {
-      pool.query(
-        format(
-          "SELECT * FROM %I WHERE %s=%L::int",
-          this.table,
-          this.primary_key,
-          id
-        ),
-        (err, res) => {
-          if (err) {
-            reject(new Error(err.message));
-            return;
-          }
-          if (res.rows.length === 0) {
-            reject(
-              new Error(
-                `No row found with the ID ${id} in the table ${this.table}`
-              )
-            );
-            return;
-          }
-          resolve(res.rows[0]);
+      pool.query(format("SELECT * FROM %I WHERE %s=%L::int", this.table, this.primary_key, id), (err, res) => {
+        if (err) {
+          reject(new Error(err.message));
           return;
         }
-      );
+        if (res.rows.length === 0) {
+          reject(new Error(`No row found with the ID ${id} in the table ${this.table}`));
+          return;
+        }
+        resolve(res.rows[0]);
+        return;
+      });
     });
   }
 
@@ -220,27 +192,14 @@ export class Model {
    * @param secondIdentifier value to which we want to compare the firstIdentifier and filter by
    * @returns this
    */
-  where(
-    firstIdentifier: string,
-    operator: PostgresWhereInterface,
-    secondIdentifier: string | number
-  ): this {
+  where(firstIdentifier: string, operator: PostgresWhereInterface, secondIdentifier: string | number): this {
     switch (this.isFirstWhere) {
       case false:
         if (typeof secondIdentifier === "number") {
-          this.bindings.wheres.push(
-            format(
-              " AND %I %s %L::int",
-              firstIdentifier,
-              operator,
-              secondIdentifier
-            )
-          );
+          this.bindings.wheres.push(format(" AND %I %s %L::int", firstIdentifier, operator, secondIdentifier));
           return this;
         }
-        this.bindings.wheres.push(
-          format(" AND %I %s %L", firstIdentifier, operator, secondIdentifier)
-        );
+        this.bindings.wheres.push(format(" AND %I %s %L", firstIdentifier, operator, secondIdentifier));
         return this;
 
       default:
@@ -280,26 +239,16 @@ export class Model {
    * @param secondIdentifier value to which we want to compare the firstIdentifier and filter by
    * @returns this
    */
-  orWhere(
-    firstIdentifier: string,
-    operator: PostgresWhereInterface,
-    secondIdentifier: string | number
-  ): this {
+  orWhere(firstIdentifier: string, operator: PostgresWhereInterface, secondIdentifier: string | number): this {
     if (this.bindings.wheres.length === 0) {
-      throw new Error(
-        "Cannot use orWhere method with out having a chain with a where clause"
-      );
+      throw new Error("Cannot use orWhere method with out having a chain with a where clause");
     }
     if (typeof secondIdentifier === "number") {
-      this.bindings.wheres.push(
-        format(" OR %s %s %L::int", firstIdentifier, operator, secondIdentifier)
-      );
+      this.bindings.wheres.push(format(" OR %s %s %L::int", firstIdentifier, operator, secondIdentifier));
       return this;
     }
 
-    this.bindings.wheres.push(
-      format(" OR %s %s %L", firstIdentifier, operator, secondIdentifier)
-    );
+    this.bindings.wheres.push(format(" OR %s %s %L", firstIdentifier, operator, secondIdentifier));
     return this;
   }
 
@@ -321,26 +270,12 @@ export class Model {
   ): this {
     if (typeof secondValue === "number") {
       this.bindings.joins.push(
-        format(
-          "%s JOIN %I ON %s %s %s::int",
-          type,
-          toBeJoinedTable,
-          firstValue,
-          operator,
-          secondValue
-        )
+        format("%s JOIN %I ON %s %s %s::int", type, toBeJoinedTable, firstValue, operator, secondValue)
       );
       return this;
     } else {
       this.bindings.joins.push(
-        format(
-          "%s JOIN %I ON %s %s %s",
-          type,
-          toBeJoinedTable,
-          firstValue,
-          operator,
-          secondValue
-        )
+        format("%s JOIN %I ON %s %s %s", type, toBeJoinedTable, firstValue, operator, secondValue)
       );
       return this;
     }
@@ -389,18 +324,10 @@ export class Model {
    * @returns string constructed sql query if no errors other wise will return void
    */
   private makeQuery(): string | void {
-    if (
-      this.bindings.selects.length !== 0 ||
-      this.bindings.wheres.length !== 0 ||
-      this.bindings.joins.length !== 0
-    ) {
+    if (this.bindings.selects.length !== 0 || this.bindings.wheres.length !== 0 || this.bindings.joins.length !== 0) {
       this.sqlQuery = format(
-        `SELECT %s FROM %I ${
-          this.bindings.joins.length !== 0 ? this.bindings.joins.join(" ") : ""
-        } ${
-          this.bindings.wheres.length !== 0
-            ? this.bindings.wheres.join(" ")
-            : " "
+        `SELECT %s FROM %I ${this.bindings.joins.length !== 0 ? this.bindings.joins.join(" ") : ""} ${
+          this.bindings.wheres.length !== 0 ? this.bindings.wheres.join(" ") : " "
         }`,
         this.bindings.selects.length !== 0 ? this.bindings.selects : "*",
         this.table

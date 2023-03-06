@@ -11,5 +11,5 @@ router.get("/getchildfolders/:parent_id", folderController.getChildFolders);
 router.post("/setcurrentfolder", folderController.setCurrentFolder);
 // Function for getting folders and designs for the sub folder page instead of getting for hierarchy
 router.post("/getsubfolders", folderController.getSubFolders);
-router.post("/getdesignsbyfolder",folderController.getDesignsByFolder)
+router.post("/getdesignsbyfolder", folderController.getDesignsByFolder);
 module.exports = router;

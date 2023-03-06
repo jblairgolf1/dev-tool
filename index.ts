@@ -14,9 +14,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //setup cors
 app.use(
-cors({
-origin: "*",
-})
+  cors({
+    origin: "*",
+  })
 );
 
 const PORT = process.env.PORT ? process.env.PORT : 3001;

@@ -7,10 +7,7 @@ import axios from "axios";
 import { Request, Response } from "express";
 import { pool } from "../db/db_config";
 
-export default async function postDesignToAffiliatedWebsites(
-  req: Request,
-  res: Response
-) {
+export default async function postDesignToAffiliatedWebsites(req: Request, res: Response) {
   const { s3Url, imageName } = res.locals;
   const client = await pool.connect();
   try {
@@ -34,9 +31,7 @@ export default async function postDesignToAffiliatedWebsites(
     FROM 
     lo
     `;
-    const allAffiliatedSites = await client.query(
-      queryForGettingAllAffiliatedWebSites
-    );
+    const allAffiliatedSites = await client.query(queryForGettingAllAffiliatedWebSites);
     /**
      * @TODO update epochlending plugin code
      */
@@ -48,10 +43,7 @@ export default async function postDesignToAffiliatedWebsites(
         // const wordPressEndPoint = website_url.includes("http")
         //   ? `${website_url}/?rest_route=/connectexpress/v1/savedesign`
         //   : `https://${website_url}/?rest_route=/connectexpress/v1/savedesign`;
-        await axios.post(
-          `${website_url}/?rest_route=/connectexpress/v1/savedesign`,
-          { url: s3Url, imageName }
-        );
+        await axios.post(`${website_url}/?rest_route=/connectexpress/v1/savedesign`, { url: s3Url, imageName });
       } catch (error) {
         console.log(error);
       }

@@ -20,9 +20,7 @@ const getAllFolders = async (req: Request, res: Response) => {
     FROM canva_designs
     WHERE folder_id IS NULL
     `;
-    const allFolders: QueryResult<InterfaceRequestFolder[]> = await pool.query(
-      allFoldersQuery
-    );
+    const allFolders: QueryResult<InterfaceRequestFolder[]> = await pool.query(allFoldersQuery);
     const allDesigns = await pool.query(allDesignsQuery);
     if (allFolders.rows.length === 0) {
       return res.json({
@@ -49,10 +47,7 @@ const createNewFolder = async (req: Request, res: Response) => {
 
   if (parent_id) {
     try {
-      await Folder.insert(
-        ["folder_name", "parent_id"],
-        [folder_name, parent_id]
-      );
+      await Folder.insert(["folder_name", "parent_id"], [folder_name, parent_id]);
       return res.json({
         success: true,
         message: "New Folder Created",
@@ -91,9 +86,7 @@ const getChildFolders = async (req: Request, res: Response) => {
   try {
     const subFoldersQuery = `SELECT folder_id,folder_name,parent_id,created_at FROM folder_structure WHERE parent_id=$1::int`;
 
-    const allChildFolders: QueryResult<[]> = await pool.query(subFoldersQuery, [
-      parent_id,
-    ]);
+    const allChildFolders: QueryResult<[]> = await pool.query(subFoldersQuery, [parent_id]);
     if (allChildFolders.rowCount === 0) {
       return res.json({
         success: true,
@@ -119,10 +112,10 @@ const setCurrentFolder = async (req: Request, res: Response) => {
   const { folder_id, parent_id } = req.body;
   if (parent_id) {
     try {
-      await pool.query(
-        "INSERT INTO selected_folder_for_canva(folder_id,parent_id) VALUES ($1::int,$2::int)",
-        [folder_id, parent_id]
-      );
+      await pool.query("INSERT INTO selected_folder_for_canva(folder_id,parent_id) VALUES ($1::int,$2::int)", [
+        folder_id,
+        parent_id,
+      ]);
       return res.json({
         success: true,
         message: "Folder selected",
@@ -136,10 +129,7 @@ const setCurrentFolder = async (req: Request, res: Response) => {
     }
   }
   try {
-    await pool.query(
-      "INSERT INTO selected_folder_for_canva(folder_id) VALUES ($1::int)",
-      [folder_id]
-    );
+    await pool.query("INSERT INTO selected_folder_for_canva(folder_id) VALUES ($1::int)", [folder_id]);
     return res.json({
       success: true,
       message: "Folder selected",
@@ -157,16 +147,10 @@ const setCurrentFolder = async (req: Request, res: Response) => {
 const getSubFolders = async (req: Request, res: Response) => {
   const { folderId } = req.body;
   try {
-    const allFolders = await Folder.select([
-      "folder_id",
-      "folder_name",
-      "created_at",
-    ])
+    const allFolders = await Folder.select(["folder_id", "folder_name", "created_at"])
       .where("parent_id", "=", folderId)
       .get();
-    const allDesigns = await Design.select(["design_url"])
-      .where("folder_id", "=", folderId)
-      .get();
+    const allDesigns = await Design.select(["design_url"]).where("folder_id", "=", folderId).get();
     return res.json({
       success: true,
       allFolders,
@@ -184,18 +168,14 @@ const getSubFolders = async (req: Request, res: Response) => {
 const getDesignsByFolder = async (req: Request, res: Response) => {
   const { folderName } = req.body;
   try {
-    const [{ folder_id }] = await Folder.select(["folder_id"])
-      .where("folder_name", "=", folderName)
-      .get();
+    const [{ folder_id }] = await Folder.select(["folder_id"]).where("folder_name", "=", folderName).get();
     if (!folder_id) {
       return res.json({
         success: false,
         message: "No folder exist with the provided name",
       });
     }
-    const allDesigns = await Design.select(["design_url"])
-      .where("folder_id", "=", folder_id)
-      .get();
+    const allDesigns = await Design.select(["design_url"]).where("folder_id", "=", folder_id).get();
     return res.json({
       success: true,
       allDesigns: allDesigns,

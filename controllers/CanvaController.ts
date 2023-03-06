@@ -10,11 +10,7 @@ import { pool } from "../db/db_config";
 import { Folder } from "../models/Folder";
 require("dotenv").config();
 
-const publishDesign = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const publishDesign = async (req: Request, res: Response, next: NextFunction) => {
   const s3Bucket = process.env.S3_BUCKET;
   // Get the first asset from the "assets" array
   const [asset] = req.body.assets;
@@ -28,18 +24,14 @@ const publishDesign = async (
     // check if a folder was selected from dashboard
     const selectedFolder = await CurrentFolder.all();
     console.log(selectedFolder);
-    console.log("length of selected folder",selectedFolder.length);
-    
+    console.log("length of selected folder", selectedFolder.length);
+
     const isFolderSelected = selectedFolder.length === 0 ? false : true;
     console.log("folder selected", isFolderSelected);
 
     // url for affiliated header
-    const affiliatedHeader = jimp.read(
-      "https://affiliatedsd.com/wp-content/uploads/2022/06/1200x50-H.jpg"
-    );
-    const affiliatedFooter = jimp.read(
-      "https://affiliatedsd.com/wp-content/uploads/2022/06/1200x50-F.jpg"
-    );
+    const affiliatedHeader = jimp.read("https://affiliatedsd.com/wp-content/uploads/2022/06/1200x50-H.jpg");
+    const affiliatedFooter = jimp.read("https://affiliatedsd.com/wp-content/uploads/2022/06/1200x50-F.jpg");
     const image = await jimp.read(asset.url);
     // original image height
     const imageHeight = image.getHeight();
@@ -71,11 +63,7 @@ const publishDesign = async (
         try {
           await Design.insert(
             ["design_url", "folder_id", "design_name"],
-            [
-              `https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`,
-              selectedFolder[0].folder_id,
-              assetName,
-            ]
+            [`https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`, selectedFolder[0].folder_id, assetName]
           );
           // empty the selected folder because after uploading to the selected folder we want to reset for new selections
           await pool.query("TRUNCATE ONLY selected_folder_for_canva");
@@ -87,11 +75,7 @@ const publishDesign = async (
         try {
           await Design.insert(
             ["design_url", "folder_id", "design_name"],
-            [
-              `https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`,
-              parent,
-              assetName,
-            ]
+            [`https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`, parent, assetName]
           );
         } catch (error) {
           console.log(error);
@@ -102,10 +86,7 @@ const publishDesign = async (
         try {
           await Design.insert(
             ["design_url", "design_name"],
-            [
-              `https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`,
-              assetName,
-            ]
+            [`https://${s3Bucket}.s3.${region}.amazonaws.com/${assetName}`, assetName]
           );
         } catch (error) {
           console.log(error);
@@ -146,9 +127,7 @@ const resourceFind = async (req: Request, res: Response) => {
     FROM folder_structure
     WHERE parent_id=$1 
     ORDER BY created_at DESC`;
-    const nestedFolders = await pool.query(getNestedFoldersQuery, [
-      containerId,
-    ]);
+    const nestedFolders = await pool.query(getNestedFoldersQuery, [containerId]);
     if (nestedFolders.rows.length === 0) {
       return res.send({ type: "ERROR", errorCode: "NOT_FOUND" });
     }
@@ -176,9 +155,7 @@ const resourceFind = async (req: Request, res: Response) => {
     FROM folder_structure
     WHERE folder_document @@ to_tsquery($1) 
     ORDER BY created_at DESC`;
-    const searchedFolders = await pool.query(getQueriedFolderQuery, [
-      `${query}:*`,
-    ]);
+    const searchedFolders = await pool.query(getQueriedFolderQuery, [`${query}:*`]);
 
     if (searchedFolders.rows.length === 0) {
       return res.send({ type: "ERROR", errorCode: "NOT_FOUND" });

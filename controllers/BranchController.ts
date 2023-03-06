@@ -6,19 +6,9 @@ import { Branch } from "../models/Branch";
 import { Corporate } from "../models/Corporate";
 import { Lo } from "../models/Lo";
 import { PostMeta } from "../models/PostMeta";
-import {
-  branchObjectInterface,
-  loDbColsEnum,
-  loObjectInterface,
-} from "../types/dbObjectsTypes";
-import {
-  affiliatesListInterface,
-  emailDataHolderInterface,
-} from "../types/generalTypes";
-import {
-  GenericExpressPostRequestInterface,
-  InterfaceRequestBlog,
-} from "../types/requestTypes";
+import { branchObjectInterface, loDbColsEnum, loObjectInterface } from "../types/dbObjectsTypes";
+import { affiliatesListInterface, emailDataHolderInterface } from "../types/generalTypes";
+import { GenericExpressPostRequestInterface, InterfaceRequestBlog } from "../types/requestTypes";
 import { blogPostMetaType } from "../types/blogPostTypes";
 import { SiteType } from "../types/siteTypes";
 import { sendEmail, sendEmailToSelectedAuthor } from "./EmailController";
@@ -48,13 +38,7 @@ const createNewBranch = (req: Request, res: Response) => {
           try {
             await Lo.insert<loDbColsEnum, loObjectInterface>(
               ["branch_id", "lo_email", "lo_name", "location", "website_url"],
-              [
-                data.branch_id,
-                lo.admin_email,
-                lo.site_name,
-                "Islamabad",
-                lo.website_url,
-              ]
+              [data.branch_id, lo.admin_email, lo.site_name, "Islamabad", lo.website_url]
             );
           } catch (error) {
             console.log(error);
@@ -87,10 +71,7 @@ const createNewBranch = (req: Request, res: Response) => {
 };
 
 // function for storing a blog coming from wp to our own db
-const postBlogToDb = async (
-  req: GenericExpressPostRequestInterface<InterfaceRequestBlog>,
-  res: Response
-) => {
+const postBlogToDb = async (req: GenericExpressPostRequestInterface<InterfaceRequestBlog>, res: Response) => {
   const { post_meta } = req.body;
 
   delete req.body.post_meta;
@@ -184,8 +165,7 @@ const postBlogToDb = async (
           });
         return res.json({
           success: true,
-          message:
-            "Blog Post Added Successfully And Email has been sent to the concerned Author",
+          message: "Blog Post Added Successfully And Email has been sent to the concerned Author",
         });
       } catch (err) {
         console.log(err);
@@ -367,9 +347,7 @@ const getSiteDetails = async (req: Request, res: Response) => {
 
   try {
     // check if the website url is a corporate
-    const corporate_id = await Corporate.select(["corporate_id"])
-      .where("website_url", "=", websiteUrl)
-      .get();
+    const corporate_id = await Corporate.select(["corporate_id"]).where("website_url", "=", websiteUrl).get();
 
     // if corporate with the url exists
     if (corporate_id.length !== 0) {
@@ -380,9 +358,7 @@ const getSiteDetails = async (req: Request, res: Response) => {
       });
     } else {
       // if no corporate exist with the given url we will check if a branch exist with the given url
-      const branch_id = await Branch.select(["branch_id"])
-        .where("website_url", "=", websiteUrl)
-        .get();
+      const branch_id = await Branch.select(["branch_id"]).where("website_url", "=", websiteUrl).get();
       // if branch exists
       if (branch_id[0]) {
         return res.json({
@@ -393,9 +369,7 @@ const getSiteDetails = async (req: Request, res: Response) => {
       }
       // if no branch exist check for lo
       else {
-        const lo_id = await Lo.select(["lo_id"])
-          .where("website_url", "=", websiteUrl)
-          .get();
+        const lo_id = await Lo.select(["lo_id"]).where("website_url", "=", websiteUrl).get();
 
         if (lo_id[0]) {
           return res.json({
@@ -421,9 +395,7 @@ const addBranchUrl = async (req: Request, res: Response) => {
 
   try {
     // get branch details for updating the site url
-    const branchDetails = await Branch.select(["branch_id"])
-      .where("branch_name", "=", site_name)
-      .get();
+    const branchDetails = await Branch.select(["branch_id"]).where("branch_name", "=", site_name).get();
     // if no branch found by the provided site_name stop execution
     if (branchDetails.length === 0) {
       return res.json({
@@ -432,14 +404,7 @@ const addBranchUrl = async (req: Request, res: Response) => {
       });
     }
     // update the branch
-    Branch.update(
-      { website_url: site_url },
-      [site_url],
-      "branch_id",
-      "=",
-      branchDetails[0].branch_id,
-      "*"
-    )
+    Branch.update({ website_url: site_url }, [site_url], "branch_id", "=", branchDetails[0].branch_id, "*")
       .then((result) => {
         return res.json({
           success: false,
@@ -463,13 +428,9 @@ const addBranchUrl = async (req: Request, res: Response) => {
 };
 
 // Function for getting all Branches which has no email associated with them
-const getBranchesWithoutAssociatedEmail = async (
-  req: Request,
-  res: Response
-) => {
+const getBranchesWithoutAssociatedEmail = async (req: Request, res: Response) => {
   try {
-    const query =
-      "SELECT * FROM branch WHERE branch_email IS NULL OR branch_email=''";
+    const query = "SELECT * FROM branch WHERE branch_email IS NULL OR branch_email=''";
     const branchesWithOutEmail = await pool.query(query);
     return res.json({
       success: true,
@@ -487,11 +448,7 @@ const getBranchesWithoutAssociatedEmail = async (
 // Function for getting all the branches
 const getAllBranches = async (req: Request, res: Response) => {
   try {
-    const allBranches = await Branch.select([
-      "branch_name",
-      "branch_id",
-      "website_url",
-    ]).get();
+    const allBranches = await Branch.select(["branch_name", "branch_id", "website_url"]).get();
     return res.json({
       success: true,
       allBranches,
@@ -509,10 +466,7 @@ const getAllBranches = async (req: Request, res: Response) => {
 const approveAndScheduleBlogPost = async (req: Request, res: Response) => {
   try {
     const { post_title } = req.body;
-    await pool.query(
-      "UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2",
-      ["3", post_title]
-    );
+    await pool.query("UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2", ["3", post_title]);
     return res.json({
       success: true,
       message: "Post status updated successfully",

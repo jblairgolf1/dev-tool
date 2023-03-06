@@ -10,9 +10,7 @@ const devConfig = {
 };
 const prodcutiondbConfig = {
   connectionString: `${process.env.DATABASE_URL}`,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
 };
 
-export const pool = new Pool(
-  process.env.NODE_ENV === "production" ? prodcutiondbConfig : devConfig
-);
+export const pool = new Pool(process.env.NODE_ENV === "production" ? prodcutiondbConfig : devConfig);

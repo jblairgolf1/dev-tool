@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { Branch } from "../models/Branch";
 import { Corporate } from "../models/Corporate";
 import { Lo } from "../models/Lo";
-import {
-  corporateDbColsEnum,
-  corporateObjectInterface,
-} from "../types/dbObjectsTypes";
+import { corporateDbColsEnum, corporateObjectInterface } from "../types/dbObjectsTypes";
 
 // for showing all Corporate
 const showAllCorporates = async (req: Request, res: Response) => {
@@ -13,15 +10,11 @@ const showAllCorporates = async (req: Request, res: Response) => {
     const data = await Corporate.all();
     for await (let element of data) {
       element.children = [];
-      const branches = await Branch.select()
-        .where("branch.corporate_id", "=", element.corporate_id)
-        .get();
+      const branches = await Branch.select().where("branch.corporate_id", "=", element.corporate_id).get();
       element.children.push(branches);
       for await (let branch of branches) {
         branch.children = [];
-        const los = await Lo.select()
-          .where("lo.branch_id", "=", branch.branch_id)
-          .get();
+        const los = await Lo.select().where("lo.branch_id", "=", branch.branch_id).get();
         branch.children.push(los);
       }
     }
@@ -34,21 +27,9 @@ const showAllCorporates = async (req: Request, res: Response) => {
 
 // for handling the creation of a new Corporate
 const createNewCorporate = (req: Request, res: Response) => {
-  const {
-    corporate_email,
-    corporate_name,
-    corporate_type,
-    website_url,
-    location,
-  }: corporateObjectInterface = req.body;
+  const { corporate_email, corporate_name, corporate_type, website_url, location }: corporateObjectInterface = req.body;
   Corporate.insert<corporateDbColsEnum, string | number | undefined>(
-    [
-      "corporate_email",
-      "corporate_name",
-      "corporate_type",
-      "website_url",
-      "location",
-    ],
+    ["corporate_email", "corporate_name", "corporate_type", "website_url", "location"],
     [corporate_email, corporate_name, corporate_type, website_url, location]
   )
     .then((data) => {
@@ -65,9 +46,7 @@ const getCorporateId = async (req: Request, res: Response) => {
   console.log(req.body);
 
   try {
-    const corporate_id = await Corporate.select(["corporate_id"])
-      .where("website_url", "=", websiteUrl)
-      .get();
+    const corporate_id = await Corporate.select(["corporate_id"]).where("website_url", "=", websiteUrl).get();
     if (corporate_id) {
       return res.json({
         success: true,

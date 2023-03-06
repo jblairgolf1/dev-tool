@@ -42,7 +42,7 @@ const loginUser = async (req: Request, res: Response) => {
     .get()
     .then((result: userObjectInterface[]) => {
       console.log(result);
-      
+
       if (!result[0]) {
         return res.sendStatus(404);
       }
@@ -57,7 +57,7 @@ const loginUser = async (req: Request, res: Response) => {
             });
           }
           console.log(result[0]);
-          
+
           const token = generateToken(result[0].user_id);
           return res.json({
             success: true,
@@ -75,9 +75,7 @@ const loginUser = async (req: Request, res: Response) => {
 const getUserData = async (req: Request, res: Response) => {
   const { user } = req.body;
   try {
-    const userData = await User.select(["email",'user_id'])
-      .where("user_id", "=", user)
-      .get();
+    const userData = await User.select(["email", "user_id"]).where("user_id", "=", user).get();
     if (userData) {
       return res.json(userData[0]);
     } else {

@@ -68,8 +68,13 @@ export const sendEmailToSelectedAuthor = (
     // prepare msg
     const msg = {
       to: author_email,
-      subject: 'New Blog Approval',
-      cc: ['mubashar.workmail@gmail.com', 'jb@blairallenagency.com', 'waqas@blairallenagency.com', 'naghman.ahmad@gmail.com'],
+      subject: "New Blog Approval",
+      cc: [
+        "mubashar.workmail@gmail.com",
+        "jb@blairallenagency.com",
+        "waqas@blairallenagency.com",
+        "naghman.ahmad@gmail.com",
+      ],
       from: {
         email: "waqasshahh13@gmail.com",
         name: "Affiliated Mortgage",
@@ -104,8 +109,8 @@ export const sendEmailForActivityApprovalToAuthor = (
   activity_description: string,
   activity_image: string,
   activity_type: string,
-  publish_date:string,
-  authorName : string
+  publish_date: string,
+  authorName: string
 ) => {
   return new Promise<any>((resolve, reject) => {
     // replace spaces with dashes so its easier to pass as query param
@@ -113,8 +118,13 @@ export const sendEmailForActivityApprovalToAuthor = (
     // prepare msg
     const msg = {
       to: author_email,
-      cc: ['mubashar.workmail@gmail.com','jb@blairallenagency.com', 'waqas@blairallenagency.com', 'naghman.ahmad@gmail.com'],
-      subject: 'New Activity Approval',
+      cc: [
+        "mubashar.workmail@gmail.com",
+        "jb@blairallenagency.com",
+        "waqas@blairallenagency.com",
+        "naghman.ahmad@gmail.com",
+      ],
+      subject: "New Activity Approval",
       from: {
         email: "waqasshahh13@gmail.com",
         name: "Affiliated Mortgage",
@@ -127,9 +137,9 @@ export const sendEmailForActivityApprovalToAuthor = (
         activityImage: activity_image,
         activityType: activity_type,
         activityDesc: activity_description,
-        publishDate:publish_date,
-        authorName:authorName,
-        guid:guid,
+        publishDate: publish_date,
+        authorName: authorName,
+        guid: guid,
         approveLink: `https://affiliatedsd.com/wp-json/connectexpress/v1/approveActivity?post_id=${post_id}`,
         declinePostLink: `https://affiliatedsd.com/decline-comment/?declined-post-title=${dashedTitle}`,
       },

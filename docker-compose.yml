@@ -1,0 +1,13 @@
+# Use postgres/example user/password credentials
+version: "3.1"
+
+services:
+  titanbyte-db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_USER: titanbyte
+      POSTGRES_DB: titanbyte
+    ports:
+      - 5432:5432

@@ -6,12 +6,7 @@ export interface corporateObjectInterface {
   corporate_name: string;
 }
 
-export type corporateDbColsEnum =
-  | "corporate_type"
-  | "location"
-  | "website_url"
-  | "corporate_email"
-  | "corporate_name";
+export type corporateDbColsEnum = "corporate_type" | "location" | "website_url" | "corporate_email" | "corporate_name";
 
 export type branchDbColsEnum =
   | "branch_email"
@@ -21,12 +16,7 @@ export type branchDbColsEnum =
   | "branch_email"
   | "website_url";
 
-export type loDbColsEnum =
-  | "lo_name"
-  | "website_url"
-  | "lo_email"
-  | "location"
-  | "branch_id";
+export type loDbColsEnum = "lo_name" | "website_url" | "lo_email" | "location" | "branch_id";
 export interface branchObjectInterface {
   corporate_id: number;
   branch_name: string;

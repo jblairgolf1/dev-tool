@@ -10,10 +10,7 @@ import {
   SEND_GRID_AFFILIATED_NEW_GIVE_AWAY_EMAIL_TEMPLATE_ID,
   SEND_GRID_POST_ACTIVITY_TO_SOCIAL_TEMPLATE_ID,
 } from "../utils/constants";
-import {
-  sendEmail,
-  sendEmailForActivityApprovalToAuthor,
-} from "./EmailController";
+import { sendEmail, sendEmailForActivityApprovalToAuthor } from "./EmailController";
 
 const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
@@ -44,14 +41,9 @@ const sendEmailFromDashBoard = (req: Request, res: Response) => {
     .send(msg)
     .then(async () => {
       // get corporate in which new site was created
-      const corporate_id = await Corporate.select(["corporate_id"])
-        .where("corporate_name", "=", corporate)
-        .get();
+      const corporate_id = await Corporate.select(["corporate_id"]).where("corporate_name", "=", corporate).get();
       // add newly created branch to our db
-      await Branch.insert(
-        ["branch_name", "corporate_id"],
-        [site_name, corporate_id[0].corporate_id]
-      );
+      await Branch.insert(["branch_name", "corporate_id"], [site_name, corporate_id[0].corporate_id]);
       return res.json({
         success: true,
         message: "Email Sent",
@@ -79,9 +71,7 @@ const emailOnNewActivity = async (req: Request, res: Response) => {
   } = req.body;
 
   if (affiliateType === "LO") {
-    const loEmail = await Lo.select(["lo_email"])
-      .where("Website_url", "=", websiteUrl)
-      .get();
+    const loEmail = await Lo.select(["lo_email"]).where("Website_url", "=", websiteUrl).get();
     if (loEmail.length !== 0) {
       let templateId = SEND_GRID_POST_ACTIVITY_TO_SOCIAL_TEMPLATE_ID;
 
@@ -127,14 +117,12 @@ const emailOnNewActivity = async (req: Request, res: Response) => {
         message: "No Lo with the given url found on our records",
       });
     }
-    
   } else {
     return res.json({
       success: false,
       message: "Invalid affiliate Type",
     });
   }
-  
 };
 
 const sendEmailOnBlogPostApproval = async (req: Request, res: Response) => {
@@ -182,19 +170,19 @@ const sendEmailOnBlogPostApproval = async (req: Request, res: Response) => {
       .get();
     if (schedule_post_date) {
       try {
-        await pool.query(
-          "UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2",
-          ["3", titleWithoutDashes]
-        );
+        await pool.query("UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2", [
+          "3",
+          titleWithoutDashes,
+        ]);
       } catch (error) {
         console.log(error);
       }
     } else {
       try {
-        await pool.query(
-          "UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2",
-          ["4", titleWithoutDashes]
-        );
+        await pool.query("UPDATE blog_post SET post_status_syndication=$1 WHERE post_title=$2", [
+          "4",
+          titleWithoutDashes,
+        ]);
       } catch (error) {
         console.log(error);
       }
@@ -203,15 +191,7 @@ const sendEmailOnBlogPostApproval = async (req: Request, res: Response) => {
     for await (let singleLo of los) {
       const { lo_id, website_url, lo_email } = singleLo;
       // send email to current iterated lo
-      await sendEmail(
-        lo_id,
-        lo_email,
-        website_url,
-        titleWithoutDashes,
-        guid,
-        author_name,
-        schedule_post_date
-      )
+      await sendEmail(lo_id, lo_email, website_url, titleWithoutDashes, guid, author_name, schedule_post_date)
         .then((result) => {
           console.log("Email Sent");
         })
@@ -467,8 +447,7 @@ const sendEmailForActivityApproval = async (req: Request, res: Response) => {
       });
     return res.json({
       success: true,
-      message:
-        "Activity Uploaded SUccessfully and the Email has been sent to the concerned Author",
+      message: "Activity Uploaded SUccessfully and the Email has been sent to the concerned Author",
     });
   } catch (error) {
     console.log(error);
