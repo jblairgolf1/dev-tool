@@ -81,8 +81,8 @@ export const sendEmailToSelectedAuthor = (
         postTitle: post_title,
         postLink: post_url,
         postFbLink: "",
-        approveLink: `https://affiliatedsd.com/wp-json/connectexpress/v1/scheduleblogpost/?post_title=${dashedTitle}`,
-        disApproveLink: `https://affiliatedsd.com/decline-comment/?declined-post-title=${dashedTitle}`,
+        approveLink: `https://blairallenmortgage.com/wp-json/connectexpress/v1/scheduleblogpost/?post_title=${dashedTitle}`,
+        disApproveLink: `https://blairallenmortgage.com/decline-comment/?declined-post-title=${dashedTitle}`,
       },
     };
     sgMail
@@ -113,7 +113,7 @@ export const sendEmailForActivityApprovalToAuthor = (
     // prepare msg
     const msg = {
       to: author_email,
-      cc: ['mubashar.workmail@gmail.com','jb@blairallenagency.com', 'waqas@blairallenagency.com', 'naghman.ahmad@gmail.com'],
+      cc: ['mubashar.workmail@gmail.com','jb@blairallenagency.com', 'waqasshahh13@gmail.com'],
       subject: 'New Activity Approval',
       from: {
         email: "waqasshahh13@gmail.com",
@@ -130,8 +130,8 @@ export const sendEmailForActivityApprovalToAuthor = (
         publishDate:publish_date,
         authorName:authorName,
         guid:guid,
-        approveLink: `https://affiliatedsd.com/wp-json/connectexpress/v1/approveActivity?post_id=${post_id}`,
-        declinePostLink: `https://affiliatedsd.com/decline-comment/?declined-post-title=${dashedTitle}`,
+        approveLink: `https://blairallenmortgage.com/wp-json/connectexpress/v1/approveActivity?post_id=${post_id}`,
+        declinePostLink: `https://blairallenmortgage.com/decline-comment/?declined-post-title=${dashedTitle}`,
       },
     };
     sgMail
