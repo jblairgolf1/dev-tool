@@ -69,7 +69,7 @@ export const sendEmailToSelectedAuthor = (
     const msg = {
       to: author_email,
       subject: 'New Blog Approval',
-      cc: ['mubashar.workmail@gmail.com', 'jb@blairallenagency.com', 'waqas@blairallenagency.com', 'naghman.ahmad@gmail.com'],
+      cc: ['mubashar.workmail@gmail.com', 'waqas@blairallenagency.com', 'naghman.ahmad@gmail.com'],
       from: {
         email: "waqasshahh13@gmail.com",
         name: "Affiliated Mortgage",
@@ -113,7 +113,7 @@ export const sendEmailForActivityApprovalToAuthor = (
     // prepare msg
     const msg = {
       to: author_email,
-      cc: ['mubashar.workmail@gmail.com','jb@blairallenagency.com', 'waqasshahh13@gmail.com'],
+      cc: ['mubashar.workmail@gmail.com', 'waqasshahh13@gmail.com'],
       subject: 'New Activity Approval',
       from: {
         email: "waqasshahh13@gmail.com",
